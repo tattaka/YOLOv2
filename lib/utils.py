@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import chainer.functions as F
 import numpy as np
 import cv2
@@ -11,7 +13,7 @@ def print_cnn_info(name, link, shape_before, shape_after, time):
 
     cost = n_stride[0] * n_stride[1] * shape_before[1] * link.ksize * link.ksize * link.out_channels
 
-    print('%s(%d × %d, stride=%d, pad=%d) (%d x %d x %d) -> (%d x %d x %d) (cost=%d): %.6f[sec]' % 
+    print('%s(%d × %d, stride=%d, pad=%d) (%d x %d x %d) -> (%d x %d x %d) (cost=%d): %.6f[sec]' %
         (
             name, link.W.shape[2], link.W.shape[3], link.stride[0], link.pad[0],
             shape_before[2], shape_before[3], shape_before[1], shape_after[2], shape_after[3], shape_after[1],
@@ -28,7 +30,7 @@ def print_pooling_info(name, filter_size, stride, pad, shape_before, shape_after
     )
     cost = n_stride[0] * n_stride[1] * shape_before[1] * filter_size * filter_size * shape_after[1]
 
-    print('%s(%d × %d, stride=%d, pad=%d) (%d x %d x %d) -> (%d x %d x %d) (cost=%d): %.6f[sec]' % 
+    print('%s(%d × %d, stride=%d, pad=%d) (%d x %d x %d) -> (%d x %d x %d) (cost=%d): %.6f[sec]' %
         (name, filter_size, filter_size, stride, pad, shape_before[2], shape_before[3], shape_before[1], shape_after[2], shape_after[3], shape_after[1], cost, time)
     )
 
@@ -161,8 +163,8 @@ def random_hsv_image(bgr_image, delta_hue, delta_sat_scale, delta_val_scale):
     val_scale = 1 + np.random.rand() * delta_val_scale * 2 - delta_val_scale
     hsv_image[:, :, 2] *= val_scale
 
-    hsv_image[hsv_image < 0] = 0 
-    hsv_image[hsv_image > 255] = 255 
+    hsv_image[hsv_image < 0] = 0
+    hsv_image[hsv_image > 255] = 255
     hsv_image = hsv_image.astype(np.uint8)
     bgr_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
     return bgr_image
@@ -186,9 +188,9 @@ def nms(predicted_results, iou_thresh):
 # reshape to yolo size
 def reshape_to_yolo_size(img):
     input_height, input_width, _ = img.shape
-    min_pixel = 320
+    min_pixel = 320.0
     #max_pixel = 608
-    max_pixel = 448
+    max_pixel = 448.0
 
     min_edge = np.minimum(input_width, input_height)
     if min_edge < min_pixel:
@@ -198,9 +200,9 @@ def reshape_to_yolo_size(img):
     if max_edge > max_pixel:
         input_width *= max_pixel / max_edge
         input_height *= max_pixel / max_edge
-
     input_width = int(input_width / 32 + round(input_width % 32 / 32)) * 32
     input_height = int(input_height / 32 + round(input_height % 32 / 32)) * 32
+
     img = cv2.resize(img, (input_width, input_height))
 
     return img

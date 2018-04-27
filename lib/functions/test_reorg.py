@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from reorg import *
 import numpy as np
 from chainer import Variable

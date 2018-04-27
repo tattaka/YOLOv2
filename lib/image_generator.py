@@ -1,9 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import cv2
 import os
 import glob
 import numpy as np
 from PIL import Image
-from lib.utils import *
+from .utils import *
 
 # src_imageの背景画像に対して、overlay_imageのalpha画像を貼り付ける。pos_xとpos_yは貼り付け時の左上の座標
 def overlay(src_image, overlay_image, pos_x, pos_y):
@@ -33,7 +35,7 @@ def overlay(src_image, overlay_image, pos_x, pos_y):
     return  cv2.cvtColor(np.asarray(result), cv2.COLOR_RGBA2BGRA)
 
 # 画像周辺のパディングを削除
-def delete_pad(image): 
+def delete_pad(image):
     orig_h, orig_w = image.shape[:2]
     mask = np.argwhere(image[:, :, 3] > 128) # alphaチャンネルの条件、!= 0 や == 255に調整できる
     (min_y, min_x) = (max(min(mask[:, 0])-1, 0), max(min(mask[:, 1])-1, 0))
@@ -52,7 +54,7 @@ def scale_image(image, scale):
     return cv2.resize(image, (int(orig_w*scale), int(orig_h*scale)))
 
 # 背景画像から、指定したhとwの大きさの領域をランダムで切り抜く
-def random_sampling(image, h, w): 
+def random_sampling(image, h, w):
     orig_h, orig_w = image.shape[:2]
     y = np.random.randint(orig_h-h+1)
     x = np.random.randint(orig_w-w+1)
@@ -128,7 +130,7 @@ class ImageGenerator():
             edges = [-item_width, -item_height, bg_width, bg_height]
             r = np.random.randint(2)
             rand1 = np.random.randint(edges[r+2] - edges[r]) + edges[r]
-            center = edges[r] + (edges[r+2] - edges[r]) / 2 
+            center = edges[r] + (edges[r+2] - edges[r]) / 2
             edges[r+2] = int(center + (center - rand1))
             edges[r] = rand1
             print(edges)
@@ -158,7 +160,7 @@ class ImageGenerator():
         for i in range(n_samples):
             bg = self.bgs[np.random.randint(len(self.bgs))]
             sample_image = random_sampling(bg, crop_height, crop_width)
- 
+
             ground_truths = []
             boxes = []
             for j in range(np.random.randint(n_items)+1):
@@ -173,7 +175,7 @@ class ImageGenerator():
                     boxes.append(box)
                     one_hot_label = np.zeros(len(self.labels))
                     one_hot_label[class_id] = 1
-                    ground_truths.append({     
+                    ground_truths.append({
                         "x": yolo_bbox[0],
                         "y": yolo_bbox[1],
                         "w": yolo_bbox[2],
@@ -186,9 +188,9 @@ class ImageGenerator():
             sample_image = random_hsv_image(sample_image, delta_hue, delta_sat_scale, delta_val_scale)
 
             #for ground_truth in ground_truths:
-            #    cv2.rectangle(sample_image, 
-            #        (int((ground_truth["x"]-ground_truth["w"]/2)*crop_width), int((ground_truth["y"]-ground_truth["h"]/2)*crop_height)), 
-            #        (int((ground_truth["x"]+ground_truth["w"]/2)*crop_width), int((ground_truth["y"]+ground_truth["h"]/2)*crop_height)), 
+            #    cv2.rectangle(sample_image,
+            #        (int((ground_truth["x"]-ground_truth["w"]/2)*crop_width), int((ground_truth["y"]-ground_truth["h"]/2)*crop_height)),
+            #        (int((ground_truth["x"]+ground_truth["w"]/2)*crop_width), int((ground_truth["y"]+ground_truth["h"]/2)*crop_height)),
             #        (0, 0, 255), 3
             #    )
             #cv2.imshow("w", sample_image)

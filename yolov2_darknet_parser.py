@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import numpy as np
 import chainer
 from chainer import cuda, Function, gradient_check, Variable, optimizers, serializers, utils
@@ -7,9 +9,9 @@ import chainer.links as L
 from chainer import training
 from chainer.training import extensions
 import argparse
-from lib.utils import *
-from lib.image_generator import *
-from yolov2 import *
+from .lib.utils import *
+from .lib.image_generator import *
+from .yolov2 import *
 
 parser = argparse.ArgumentParser(description="指定したパスのweightsファイルを読み込み、chainerモデルへ変換する")
 parser.add_argument('file', help="オリジナルのyolov2のweightsファイルへのパスを指定")
@@ -30,27 +32,27 @@ yolov2.train = True
 yolov2.finetune = False
 
 layers=[
-    [3, 32, 3], 
-    [32, 64, 3], 
-    [64, 128, 3], 
-    [128, 64, 1], 
-    [64, 128, 3], 
-    [128, 256, 3], 
-    [256, 128, 1], 
-    [128, 256, 3], 
-    [256, 512, 3], 
-    [512, 256, 1], 
-    [256, 512, 3], 
-    [512, 256, 1], 
-    [256, 512, 3], 
-    [512, 1024, 3], 
-    [1024, 512, 1], 
-    [512, 1024, 3], 
-    [1024, 512, 1], 
-    [512, 1024, 3], 
-    [1024, 1024, 3], 
-    [1024, 1024, 3], 
-    [3072, 1024, 3], 
+    [3, 32, 3],
+    [32, 64, 3],
+    [64, 128, 3],
+    [128, 64, 1],
+    [64, 128, 3],
+    [128, 256, 3],
+    [256, 128, 1],
+    [128, 256, 3],
+    [256, 512, 3],
+    [512, 256, 1],
+    [256, 512, 3],
+    [512, 256, 1],
+    [256, 512, 3],
+    [512, 1024, 3],
+    [1024, 512, 1],
+    [512, 1024, 3],
+    [1024, 512, 1],
+    [512, 1024, 3],
+    [1024, 1024, 3],
+    [1024, 1024, 3],
+    [3072, 1024, 3],
 ]
 
 offset=0
